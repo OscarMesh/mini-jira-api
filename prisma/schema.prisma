@@ -1,0 +1,64 @@
+generator client {
+  binaryTargets   = ["native", "linux-musl-openssl-3.0.x"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema", "fullTextSearchPostgres", "relationJoins", "driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["public"]
+}
+
+model User {
+  id       String   @id @default(dbgenerated("nanoid(10)")) @db.VarChar
+  email    String   @unique @map("email")
+  password String   @db.VarChar(255)
+  name     String?  @map("name")
+  role     UserRole @default(USER) @map("role")
+  tasks    Task[]
+
+  @@map("users")
+  @@schema("public")
+}
+
+model Task {
+  id          String       @id @default(dbgenerated("nanoid(10)")) @db.VarChar
+  title       String       @map("title")
+  description String?      @map("description")
+  status      TaskStatus   @default(TODO) @map("status")
+  priority    TaskPriority @default(MEDIUM) @map("priority")
+  userId      String       @map("user_id")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("tasks")
+  @@schema("public")
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+
+  @@schema("public")
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+
+  @@schema("public")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+
+  @@schema("public")
+}
