@@ -68,6 +68,20 @@ Once the application is running, you can access the Swagger API documentation at
 http://localhost:3000/docs
 ```
 
+## Hosted Server
+
+The API is hosted and available at:
+
+```
+https://mini-jira-api.onrender.com
+```
+
+You can access the hosted API documentation at:
+
+```
+https://mini-jira-api.onrender.com/docs
+```
+
 ## Database Schema
 
 The application uses PostgreSQL with the following main entities:
